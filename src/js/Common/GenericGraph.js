@@ -9,66 +9,78 @@
 
 	   @return {svg, keys, data, options}
 	*/
-	export default function initialization(...args) {
+	export function GenericGraph(...args) {
 
-		// find options 
-		let importedOptions = typeof args[3] !== "undefined" ? args[3] :
-						 typeof args[2] == "object" && !Array.isArray(args[2]) ? args[2] : {};
-		
-		//merge with default options
-		let options = normalizeOptions(Object.assign({}, defaultOptions, importedOptions));
-
-		//svg frame
+		// if no svg parent throw
 		if (!args[0] || !args[0].nodeType) {
 			throw "Dom node not selected";
 		}
+
+		// find options on the last paramenter, or empty options
+		let importedOptions = Array.isArray(args[args.length - 1]) ? {} : args[args.length - 1];
 		
-		//find and remove existing svg
-		let parent = d3.select(args[0]);
-
-		let svg = parent.selectOrCreate('svg', classNames.svg);
+		//merge with default options
+		this.options = 		normalizeOptions(Object.assign({}, defaultOptions, importedOptions));
+		this.classNames = 	Object.assign({}, defaultClassNames, this.options.classNames);
+		this.svg = 			d3.select(args[0]).selectOrCreate('svg', this.classNames.svg);
 		
-		if (options.width) svg.style('width', options.width);
-		if (options.height) svg.style('height', options.height);
 
-		//calculate dimensions
-		let dimensions = svg.node().getBoundingClientRect();
-
-
-
-		//data and keys
-		let data, keys;
 		//if two separate arrays
 		if (Array.isArray(args[2])) {
-			keys = args[1];
-			data = args[2];
+		
+			this.keys = args[1];
+			this.data = args[2];
+		
 		} else {
 			//if {key, value} format
 			let source = args[1];
 			if (source[0].key && source[0].value) {
-				key  = source.map(x => x.key);
-				data = source.map(x => x.value);
+				this.key  = source.map(x => x.key);
+				this.data = source.map(x => x.value);
 			} else {
 			//else just values
-				data = source;
-				keys = [];
+				this.data = source;
+				this.keys = [];
 			}
 		}
 
+		//if responsive add onResize event
+		if (this.options.responsive !== false) {
+			window.addEventListener('resize', this.onResize.bind(this));
+		}
 
-		return {svg, keys, data, options, dimensions};
+		return this.setDimensions();
 	}
 
 
+
+	GenericGraph.prototype.onResize = function() {
+		this.setDimensions();
+		this.render();
+	}
+
+	GenericGraph.prototype.setDimensions = function() {
+		if (this.options.width) this.svg.style('width', this.options.width);
+		if (this.options.height) this.svg.style('height', this.options.height);
+
+		//calculate dimensions
+		this.dimensions = this.svg.node().getBoundingClientRect();
+		return this;
+	}
+
+
+	/* ----------------------------------------- Private methods and data --------------- */
+
 	//class names for the dom objects
-	export const classNames = {
+	const defaultClassNames = {
 		svg: 'simpleGraph_svg',
 		graph: 'simpleGraph_graph',
 		xAxis: 'simpleGraph_xAxis simpleGraph_axis',
 		yAxis: 'simpleGraph_yAxis simpleGraph_axis',
 		grid: 'simpleGraph_grid'
-	}
+	};
 
+	//default options for all graphs
 	const defaultOptions ={
 			padding: 20,
 			//paddingH and V override general padding
@@ -88,7 +100,7 @@
 			grid: true
 	};
 
-
+	// normalize options when a general option like axis can override both xAxis and yAxis
 	const toNormalize = [
 			["xAxis", "axis"],
 			["yAxis", "axis"],

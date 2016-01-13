@@ -13,21 +13,21 @@ module.exports = function (grunt) {
                // if the source file has an extension of es6 then
                // we change the name of the source file accordingly.
                // The result file's extension is always .js
-               "./dist/d3.SimpleGraphs.js": ["./assets/js/d3.SimpleGraphs.js"]
+               "./dist/d3.SimpleGraphs.js": ["./src/js/d3.SimpleGraphs.js"]
             }
          }
       },
       less: {
          dist: {
             files: {
-              "./dist/d3.SimpleGraphs.css": ["./assets/less/d3.SimpleGraphs.less"]
+              "./dist/d3.SimpleGraphs.css": ["./src/less/d3.SimpleGraphs.less"]
             }
          }
       },
       watch: {
          scripts: {
-            files: ["./assets/**/*"],
-            tasks: ["browserify"]
+            files: ["./src/**/*"],
+            tasks: ["build"]
          }
       }
    });

@@ -1,87 +1,163 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-'use strict';
+"use strict";
 
 exports.__esModule = true;
-exports.displayBoxAxis = displayBoxAxis;
+exports.BarGraph = BarGraph;
 
-var _commonInitialization = require('./commonInitialization');
+var _BoxGraph = require('./BoxGraph');
 
-function displayBoxAxis(svg, keys, dimensions, scales, options) {
-  if (options.xAxis) {
-    var xAxis = d3.svg.axis().scale(scales.keys).orient("bottom").tickFormat(function (d, i) {
-      return keys[i];
+function BarGraph() {
+	for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+		args[_key] = arguments[_key];
+	}
+
+	_BoxGraph.BoxGraph.apply(this, args);
+}
+
+BarGraph.prototype.render = function () {
+	var _this = this;
+
+	this.boxRender();
+
+	var items = this.graph.selectAll("rect").data(this.data);
+
+	//create new items as needed
+	items.enter().append("rect");
+
+	items.attr("x", function (item, i) {
+		return _this.scales.keys(i) - _this.scales.barWidth / 2;
+	}).attr("y", function (item) {
+		return item > 0 ? _this.scales.data(item) : _this.scales.data(0);
+	}).attr("width", this.scales.barWidth).attr("height", function (item, i) {
+		return Math.abs(_this.scales.data(0) - _this.scales.data(item));
+	}).classed("negative", function (item) {
+		return item < 0;
+	});
+};
+
+BarGraph.prototype = Object.assign({}, _BoxGraph.BoxGraph.prototype, BarGraph.prototype);
+
+},{"./BoxGraph":3}],2:[function(require,module,exports){
+"use strict";
+
+exports.__esModule = true;
+exports.BoxAxis = BoxAxis;
+
+function BoxAxis() {}
+
+;
+
+BoxAxis.prototype.generateAxis = function () {
+  var _this = this;
+
+  if (this.options.xAxis) {
+
+    var xAxis = d3.svg.axis().scale(this.scales.keys).orient("bottom").tickFormat(function (d, i) {
+      return _this.keys[i];
     });
-    svg.selectOrCreate('g', _commonInitialization.classNames.xAxis).applyTranslate(options.xAxisSpace, dimensions.height - options.yAxisSpace).call(xAxis);
+
+    this.svg.selectOrCreate('g', this.classNames.xAxis).applyTranslate(this.options.xAxisSpace, this.dimensions.height - this.options.yAxisSpace).call(xAxis);
   }
 
-  if (options.yAxis) {
-    var yAxis = d3.svg.axis().scale(scales.data).orient("left");
+  if (this.options.yAxis) {
+    var yAxis = d3.svg.axis().scale(this.scales.data).orient("left");
 
-    svg.selectOrCreate('g', _commonInitialization.classNames.yAxis).applyTranslate(options.yAxisSpace + options.paddingH, options.paddingV).call(yAxis);
+    this.svg.selectOrCreate('g', this.classNames.yAxis).applyTranslate(this.options.yAxisSpace + this.options.paddingH, this.options.paddingV).call(yAxis);
   }
 
-  if (options.grid) {
-    var yAxisGrid = d3.svg.axis().scale(scales.data).orient("left");
+  return this;
+};
 
-    svg.selectOrCreate("g", _commonInitialization.classNames.grid).call(yAxisGrid.tickSize(-dimensions.width, 0, 0).tickFormat(""));
+BoxAxis.prototype.generateGrid = function () {
+
+  if (this.options.grid) {
+
+    var yAxisGrid = d3.svg.axis().scale(this.scales.data).orient("left");
+
+    this.svg.selectOrCreate("g", this.classNames.grid).call(yAxisGrid.tickSize(-this.dimensions.width, 0, 0).tickFormat(""));
   }
-}
 
-},{"./commonInitialization":3}],2:[function(require,module,exports){
+  return this;
+};
+
+},{}],3:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
-exports.generateBarGraph = generateBarGraph;
+exports.BoxGraph = BoxGraph;
 
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+var _CommonGenericGraph = require('../Common/GenericGraph');
 
-var _commonInitialization = require('./commonInitialization');
+var _BoxScales = require('./BoxScales');
 
-var _commonInitialization2 = _interopRequireDefault(_commonInitialization);
+var _BoxAxis = require('./BoxAxis');
 
-var _scales = require('./scales');
+function BoxGraph() {
+	for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+		args[_key] = arguments[_key];
+	}
 
-var _axis = require('./axis');
-
-function generateBarGraph() {
-		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-				args[_key] = arguments[_key];
-		}
-
-		var _commonInitialization$apply = _commonInitialization2['default'].apply(this, args);
-
-		var svg = _commonInitialization$apply.svg;
-		var keys = _commonInitialization$apply.keys;
-		var data = _commonInitialization$apply.data;
-		var options = _commonInitialization$apply.options;
-		var dimensions = _commonInitialization$apply.dimensions;
-
-		var scales = _scales.boxScaleFactory(keys, data, dimensions, options);
-		_axis.displayBoxAxis(svg, keys, dimensions, scales, options);
-
-		//select group and rects
-		var graph = svg.selectOrCreate('g', _commonInitialization.classNames.graph + " bars");
-		graph.applyTranslate(options.xAxisSpace, options.paddingV);
-
-		var items = graph.selectAll("rect").data(data);
-
-		//create new items as needed
-		items.enter().append("rect");
-
-		items.attr("x", function (item, i) {
-				return scales.keys(i) - scales.barWidth / 2;
-		}).attr("y", function (item) {
-				return item > 0 ? scales.data(item) : scales.data(0);
-		}).attr("width", scales.barWidth).attr("height", function (item, i) {
-				return Math.abs(scales.data(0) - scales.data(item));
-		}).classed("negative", function (item) {
-				return item < 0;
-		});
-
-		//if axis need to be visible, must update the position of the graph
+	_CommonGenericGraph.GenericGraph.apply(this, args);
+	this.render();
 }
 
-},{"./axis":1,"./commonInitialization":3,"./scales":6}],3:[function(require,module,exports){
+BoxGraph.prototype.boxRender = function () {
+
+	this.generateScales().generateAxis().generateGrid();
+
+	//select group and rects
+	this.graph = this.svg.selectOrCreate('g', this.classNames.graph + " bars").applyTranslate(this.options.xAxisSpace, this.options.paddingV);
+};
+
+BoxGraph.prototype.render = function () {
+	throw "'render()' method must be implemented by a final class";
+};
+
+BoxGraph.prototype = Object.assign({}, _CommonGenericGraph.GenericGraph.prototype, _BoxScales.BoxScales.prototype, _BoxAxis.BoxAxis.prototype, BoxGraph.prototype);
+
+},{"../Common/GenericGraph":5,"./BoxAxis":2,"./BoxScales":4}],4:[function(require,module,exports){
+"use strict";
+
+exports.__esModule = true;
+exports.BoxScales = BoxScales;
+
+function BoxScales() {}
+
+;
+
+BoxScales.prototype.generateScales = function () {
+
+		//scales to be returned
+		var k = d3.scale.linear(),
+		    d = d3.scale.linear();
+
+		//find padding and make it count when calculating range and barWidth
+		//calculate padding
+		var paddingH = this.options.paddingH + this.options.xAxisSpace;
+		var paddingV = this.options.paddingV + this.options.yAxisSpace;
+		var barWidth = this.options.barWidth || (this.dimensions.width - 2 * paddingH) / (this.options.barSpace * this.keys.length);
+
+		var kDomain = isNaN(this.keys[0]) || this.options.equalSpaceBetweenKeys ? [0, this.keys.length - 1] : [d3.min(this.keys), d3.max(this.keys)];
+
+		//if non numeric keys
+		k.domain(kDomain).range([paddingH, this.dimensions.width - paddingH - barWidth / 2]);
+
+		//get min data value
+		var dMin = !this.options.forceZeroAsStart ? d3.min(this.data) : Math.min(0, d3.min(this.data));
+
+		//create vertvial scale
+		d.domain([dMin, d3.max(this.data)]).range([this.dimensions.height - paddingV, 0]);
+
+		this.scales = {
+				keys: k,
+				data: d,
+				barWidth: barWidth
+		};
+
+		return this;
+};
+
+},{}],5:[function(require,module,exports){
 /* ---------------------------------- Common Initialization------------------ */
 /* 
    Parses the common parameters.
@@ -92,64 +168,77 @@ function generateBarGraph() {
    Node root, [{key: string, value: number}] data, {} options
 	   @return {svg, keys, data, options}
 */
-"use strict";
+'use strict';
 
 exports.__esModule = true;
-exports["default"] = initialization;
+exports.GenericGraph = GenericGraph;
 
-function initialization() {
+function GenericGraph() {
+	for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+		args[_key] = arguments[_key];
+	}
 
-	// find options
-	var importedOptions = typeof arguments[3] !== "undefined" ? arguments[3] : typeof arguments[2] == "object" && !Array.isArray(arguments[2]) ? arguments[2] : {};
-
-	//merge with default options
-	var options = normalizeOptions(Object.assign({}, defaultOptions, importedOptions));
-
-	//svg frame
-	if (!arguments[0] || !arguments[0].nodeType) {
+	// if no svg parent throw
+	if (!args[0] || !args[0].nodeType) {
 		throw "Dom node not selected";
 	}
 
-	//find and remove existing svg
-	var parent = d3.select(arguments[0]);
+	// find options on the last paramenter, or empty options
+	var importedOptions = Array.isArray(args[args.length - 1]) ? {} : args[args.length - 1];
 
-	var svg = parent.selectOrCreate('svg', classNames.svg);
+	//merge with default options
+	this.options = normalizeOptions(Object.assign({}, defaultOptions, importedOptions));
+	this.classNames = Object.assign({}, defaultClassNames, this.options.classNames);
+	this.svg = d3.select(args[0]).selectOrCreate('svg', this.classNames.svg);
 
-	if (options.width) svg.style('width', options.width);
-	if (options.height) svg.style('height', options.height);
-
-	//calculate dimensions
-	var dimensions = svg.node().getBoundingClientRect();
-
-	//data and keys
-	var data = undefined,
-	    keys = undefined;
 	//if two separate arrays
-	if (Array.isArray(arguments[2])) {
-		keys = arguments[1];
-		data = arguments[2];
+	if (Array.isArray(args[2])) {
+
+		this.keys = args[1];
+		this.data = args[2];
 	} else {
 		//if {key, value} format
-		var source = arguments[1];
+		var source = args[1];
 		if (source[0].key && source[0].value) {
-			key = source.map(function (x) {
+			this.key = source.map(function (x) {
 				return x.key;
 			});
-			data = source.map(function (x) {
+			this.data = source.map(function (x) {
 				return x.value;
 			});
 		} else {
 			//else just values
-			data = source;
-			keys = [];
+			this.data = source;
+			this.keys = [];
 		}
 	}
 
-	return { svg: svg, keys: keys, data: data, options: options, dimensions: dimensions };
+	//if responsive add onResize event
+	if (this.options.responsive !== false) {
+		window.addEventListener('resize', this.onResize.bind(this));
+	}
+
+	return this.setDimensions();
 }
 
+GenericGraph.prototype.onResize = function () {
+	this.setDimensions();
+	this.render();
+};
+
+GenericGraph.prototype.setDimensions = function () {
+	if (this.options.width) this.svg.style('width', this.options.width);
+	if (this.options.height) this.svg.style('height', this.options.height);
+
+	//calculate dimensions
+	this.dimensions = this.svg.node().getBoundingClientRect();
+	return this;
+};
+
+/* ----------------------------------------- Private methods and data --------------- */
+
 //class names for the dom objects
-var classNames = {
+var defaultClassNames = {
 	svg: 'simpleGraph_svg',
 	graph: 'simpleGraph_graph',
 	xAxis: 'simpleGraph_xAxis simpleGraph_axis',
@@ -157,7 +246,7 @@ var classNames = {
 	grid: 'simpleGraph_grid'
 };
 
-exports.classNames = classNames;
+//default options for all graphs
 var defaultOptions = {
 	padding: 20,
 	//paddingH and V override general padding
@@ -177,6 +266,7 @@ var defaultOptions = {
 	grid: true
 };
 
+// normalize options when a general option like axis can override both xAxis and yAxis
 var toNormalize = [["xAxis", "axis"], ["yAxis", "axis"], ["xAxisSpace", "axisSpace"], ["yAxisSpace", "axisSpace"], ["paddingH", "padding"], ["paddingV", "padding"]];
 
 function normalizeOptions(options) {
@@ -190,46 +280,7 @@ function normalizeOptions(options) {
 	return options;
 }
 
-},{}],4:[function(require,module,exports){
-'use strict';
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-d3.simpleGraphs = (function () {
-	var _extendSelection = require('./extendSelection');
-
-	var _extendSelection2 = _interopRequireDefault(_extendSelection);
-
-	var _boxGraphs = require('./boxGraphs');
-
-	var mainGenerator = function mainGenerator(generator) {
-		for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-			args[_key - 1] = arguments[_key];
-		}
-
-		var start = Function.prototype.bind.apply(generator, [undefined].concat(args));
-		start();
-
-		//if options.responsive === false, do not bind window.resize
-		if (typeof args[args.length - 1] === "object" && args[args.length - 1].responsive === false) {
-			return;
-		} else {
-			window.addEventListener('resize', start);
-		}
-	};
-
-	return {
-		bars: function bars() {
-			for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-				args[_key2] = arguments[_key2];
-			}
-
-			mainGenerator.apply(undefined, [_boxGraphs.generateBarGraph].concat(args));
-		}
-	};
-})();
-
-},{"./boxGraphs":2,"./extendSelection":5}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 exports.__esModule = true;
@@ -263,45 +314,42 @@ d3.selection.prototype.applyTranslate = function (left, top) {
 };
 module.exports = exports['default'];
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 'use strict';
 
-exports.__esModule = true;
-exports.boxScaleFactory = boxScaleFactory;
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-var _commonInitialization = require('./commonInitialization');
+d3.simpleGraphs = (function () {
+	var _ExtendD3ExtendSelection = require('./ExtendD3/extendSelection');
 
-function boxScaleFactory(keys, data, dimensions, options) {
-	var k = undefined,
-	    d = undefined,
-	    keysItem = keys;
+	var _ExtendD3ExtendSelection2 = _interopRequireDefault(_ExtendD3ExtendSelection);
 
-	//if non numeric keys
-	if (isNaN(keys[0]) || options.equalSpaceBetweenKeys) {
-		k = d3.scale.linear().domain([0, keys.length - 1]);
-	} else {
-		k = d3.scale.linear().domain([d3.min(keys), d3.max(keys)]);
+	var _BoxBarGraph = require('./Box/BarGraph');
+
+	//every type of graph and its constructor
+	var constructors = {
+		"bars": _BoxBarGraph.BarGraph
+	};
+
+	//creates a new instance of the selected type of graph, passing all paramteres along
+	function createGraph(Type, args) {
+		return new (Function.prototype.bind.apply(Type, [this].concat(args)))();
 	}
 
-	//find padding and make it count when calculating range and barWidth
-	var paddingH = options.paddingH;
-	//xAxis space
-	paddingH += options.xAxis ? options.xAxisSpace : 0;
-	var barWidth = options.barWidth || (dimensions.width - 2 * paddingH) / (options.barSpace * keys.length);
+	/* Returns an object whose keys are all types of graphs, 
+    its values the function to generate the generate the graph.
+    THIS IS THE EXPOSED PUBLIC API 
+ */
+	return Object.keys(constructors).reduce(function (map, key) {
+		map[key] = function () {
+			for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+				args[_key] = arguments[_key];
+			}
 
-	k.range([0 + paddingH, dimensions.width - paddingH - barWidth / 2]);
+			return createGraph(constructors[key], args);
+		};
+		return map;
+	}, {});
+})();
 
-	//get min data value
-	var min = !options.forceZeroAsStart ? d3.min(data) : Math.min(0, d3.min(data));
-	var negativeNumbers = min < 0;
-
-	//calculate padding
-	var paddingV = options.paddingV + options.yAxisSpace;
-
-	//create vertvial scale
-	d = d3.scale.linear().domain([min, d3.max(data)]).range([dimensions.height - paddingV, 0]);
-
-	return { keys: k, data: d, barWidth: barWidth, negativeNumbers: negativeNumbers, paddingH: paddingH, paddingV: paddingV };
-}
-
-},{"./commonInitialization":3}]},{},[4]);
+},{"./Box/BarGraph":1,"./ExtendD3/extendSelection":6}]},{},[7]);
