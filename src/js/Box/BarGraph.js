@@ -5,6 +5,8 @@ export function BarGraph(...args) {
 	BoxGraph.apply(this, args);
 }
 
+BarGraph.prototype = Object.assign({}, BoxGraph.prototype);
+
 BarGraph.prototype.render = function() {
 	
 	this.boxRender();
@@ -25,5 +27,5 @@ BarGraph.prototype.render = function() {
 
 }
 
-BarGraph.prototype = Object.assign({}, BoxGraph.prototype, BarGraph.prototype);
+
 			

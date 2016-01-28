@@ -8,6 +8,12 @@ export function BoxGraph(...args) {
 	this.render();
 }
 
+
+BoxGraph.prototype = Object.assign({},
+			  						GenericGraph.prototype, 
+			  						BoxScales.prototype, 
+			  						BoxAxis.prototype);
+
 BoxGraph.prototype.boxRender = function() {
 	
 	this.generateScales()
@@ -25,8 +31,3 @@ BoxGraph.prototype.render = function() {
 	throw "'render()' method must be implemented by a final class";
 }
 
-BoxGraph.prototype = Object.assign({},
-			  						GenericGraph.prototype, 
-			  						BoxScales.prototype, 
-			  						BoxAxis.prototype,
-			  						BoxGraph.prototype);
