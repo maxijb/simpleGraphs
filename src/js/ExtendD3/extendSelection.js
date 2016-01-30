@@ -10,7 +10,7 @@ export default {}
 		@return found or created element
 	*/
 	d3.selection.prototype.selectOrCreate = function(child, className) {
-		let classes = className.split(' ');
+		let classes = !className ? [] : className.split(' ');
 		let selection = this.selectAll(child);
 		if (className) selection = selection.filter('.'+classes.join('.'));
 		

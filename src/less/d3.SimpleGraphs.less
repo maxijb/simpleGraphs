@@ -1,24 +1,81 @@
+/* Colors */
+@primary: blue;
+@secondary: navajowhite;
+@tertiary: limegreen;
+@negative: red;
+
 .simpleGraph_svg {
 	width: 100%;
 	height: 100%;
 	background: white;
-
-	.simpleGraph_graph.bars {
-		rect {
-			fill: blue;
-
-			&.negative {
-				fill: red;
-			}
-		}
-	}
-
-	.simpleGraph_grid {
-		stroke: lightgray;
-	}
-
 }
 
+
+.simpleGraph_trigger {
+	cursor: pointer;
+}
+
+
+/*///////////////Bars /////////////// */
+.simpleGraph_graph.bars {
+	rect {
+		fill: @primary;
+
+		&:hover {
+			fill: darken(@primary, 25%); 
+		}
+
+		&.negative {
+			fill: @negative;
+			&:hover {
+				fill: darken(@negative, 25%); 
+			}
+		}
+
+	}
+}
+
+
+
+/*///////////////Line /////////////// */
+.simpleGraph_graph.line,
+.simpleGraph_graph.area {
+	> path.line {
+		stroke: @primary;
+		stroke-width: 2px;
+		fill: none;
+	}
+
+	> circle {
+		stroke: @primary;
+		stroke-width: 2px;
+		fill: @secondary;
+
+		&:hover {
+			stroke: @negative;
+			fill: @tertiary;
+		}
+
+	}
+}
+
+.simpleGraph_graph.area {
+	path.area {
+		fill: @secondary;
+		
+	}
+}
+
+
+
+/*///////////////Grid /////////////// */
+
+.simpleGraph_grid {
+	stroke: lightgray;
+}
+
+
+/*///////////////Axis /////////////// */
 .simpleGraph_axis {
 	path, line {
 		fill: none;
@@ -28,6 +85,10 @@
 	text {
 		font-family: sans-serif;
 		font-size: 11px;
+	}
+
+	&.simpleGraph_xAxis path {
+	  /*display: none;*/
 	}
 }
 

@@ -77,7 +77,9 @@
 		graph: 'simpleGraph_graph',
 		xAxis: 'simpleGraph_xAxis simpleGraph_axis',
 		yAxis: 'simpleGraph_yAxis simpleGraph_axis',
-		grid: 'simpleGraph_grid'
+		grid: 'simpleGraph_grid',
+		trigger: 'simpleGraph_trigger',
+
 	};
 
 	//default options for all graphs
@@ -87,6 +89,7 @@
 			paddingH: undefined,
 			paddingV: undefined,
 			barSpace: 1.2,
+			yScaleExceed: 1.1,
 			axis: true,
 			//xAxis and yAxis override general axis propertie
 			xAxis: undefined,
@@ -97,7 +100,16 @@
 			yAxisSpace: undefined,
 			equalSpaceBetweenKeys: false,
 			forceZeroAsStart: true,
-			grid: true
+			grid: true,
+			//animation
+			animation: true,
+			duration: 600,
+			//events
+			showTooltip: 'mouseover',
+			showHandlers: 'true',
+			//area
+			showTopLine: false
+
 	};
 
 	// normalize options when a general option like axis can override both xAxis and yAxis

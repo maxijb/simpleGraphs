@@ -8,9 +8,13 @@ BoxScales.prototype.generateScales = function()  {
 
 		//find padding and make it count when calculating range and barWidth
 		//calculate padding
-		let paddingH = this.options.paddingH + this.options.xAxisSpace;
-		let paddingV = this.options.paddingV + this.options.yAxisSpace;
-		let barWidth = this.options.barWidth || (this.dimensions.width - 2 * paddingH) / (this.options.barSpace * this.keys.length);
+
+		this.graphDimensions = {
+			width: this.dimensions.width - this.options.yAxisSpace - 2 * this.options.paddingH,
+			height: this.dimensions.height - this.options.xAxisSpace - 2 * this.options.paddingV 
+		};
+
+		let barWidth = this.options.barWidth || this.graphDimensions.width / this.keys.length / this.options.barSpace;
 		
 		let kDomain = (isNaN(this.keys[0]) || this.options.equalSpaceBetweenKeys) ?
 				[0, this.keys.length-1]
@@ -19,14 +23,14 @@ BoxScales.prototype.generateScales = function()  {
 
 		//if non numeric keys
 		k.domain(kDomain)
-		 .range([paddingH, this.dimensions.width - paddingH - barWidth / 2]);
+		 .range([0, this.graphDimensions.width - barWidth]);
 
 		//get min data value
 		let dMin = !this.options.forceZeroAsStart ? d3.min(this.data) : Math.min(0, d3.min(this.data));
 
 		//create vertvial scale
-		d.domain([dMin, d3.max(this.data)])
-		  .range([this.dimensions.height - paddingV, 0]);
+		d.domain([dMin * this.options.yScaleExceed, d3.max(this.data) * this.options.yScaleExceed ])
+		  .range([this.graphDimensions.height, 0]);
 
 		this.scales = {
 			keys: k,

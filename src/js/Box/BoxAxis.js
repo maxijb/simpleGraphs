@@ -10,7 +10,7 @@ BoxAxis.prototype.generateAxis = function() {
                   .tickFormat((d, i) => this.keys[i] );
 
         this.svg.selectOrCreate('g', this.classNames.xAxis)
-        	.applyTranslate(this.options.xAxisSpace, this.dimensions.height - this.options.yAxisSpace)
+        	.applyTranslate(this.options.yAxisSpace + this.options.paddingH, this.graphDimensions.height + this.options.paddingV)
         	.call(xAxis);
     }
 
@@ -20,13 +20,17 @@ BoxAxis.prototype.generateAxis = function() {
                   .orient("left");
                   
         this.svg.selectOrCreate('g', this.classNames.yAxis)
-        	.applyTranslate(this.options.yAxisSpace+this.options.paddingH, this.options.paddingV)
+        	.applyTranslate(this.options.yAxisSpace, this.options.paddingV)
         	.call(yAxis);
 	}
 
-  return this;
+  return this.adjustLabels();
 	
 }
+
+BoxAxis.prototype.adjustLabels = function() {};
+
+
 
 BoxAxis.prototype.generateGrid = function() {
   
@@ -38,8 +42,9 @@ BoxAxis.prototype.generateGrid = function() {
         
 
     this.svg.selectOrCreate("g", this.classNames.grid)         
+          .applyTranslate(this.options.yAxisSpace, this.options.paddingV)
           .call(yAxisGrid
-              .tickSize(-this.dimensions.width, 0, 0)
+              .tickSize(-this.graphDimensions.width - this.options.paddingH, 0, 0)
               .tickFormat("")
           );
   }

@@ -3,10 +3,14 @@ d3.simpleGraphs = (() => {
 
 	import {default} from './ExtendD3/extendSelection';
 	import {BarGraph} from './Box/BarGraph';
+	import {LineGraph} from './Box/LineGraph';
+	import {AreaGraph} from './Box/AreaGraph';
 	
 	//every type of graph and its constructor
 	const constructors = {
-		"bars": BarGraph
+		"bars": BarGraph,
+		"line": LineGraph,
+		"area": AreaGraph
 	};
 
 	
