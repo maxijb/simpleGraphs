@@ -13,12 +13,10 @@ AreaGraph.prototype.render = function() {
 	
 	this.boxRender();
 
-	this.graph.selectAll('circle').remove(); 
-
 	let line = this.graph.selectOrCreate("path", 'area');
 
+	//line at the top of the area
 	if (this.options.showTopLine) LineGraph.prototype.render.call(this);
-
 	
 	let {lineData, lineData0} = this.getFormattedData();
 	//for circles
@@ -33,9 +31,6 @@ AreaGraph.prototype.render = function() {
 	lineData0.unshift(firstPoint);
 	lineData0.push(lastPoint);
 
-
-
-	
 
 	if (this.options.animation) {
 		line = line.attr('d', this.lineFunction(lineData0))

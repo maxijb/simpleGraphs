@@ -5,7 +5,6 @@ import {Tooltip} from '../Common/Tooltip';
 
 
 export function BoxGraph(...args) {
-
 	GenericGraph.apply(this, args);
 	this.render();
 	this.bindTooltip();
@@ -17,6 +16,7 @@ BoxGraph.prototype = Object.assign({},
 			  						BoxScales.prototype, 
 			  						BoxAxis.prototype,
 			  						Tooltip.prototype);
+
 
 BoxGraph.prototype.boxRender = function() {
 	
@@ -30,6 +30,7 @@ BoxGraph.prototype.boxRender = function() {
 					.applyTranslate(this.options.xAxisSpace + this.options.paddingH, this.options.paddingV); 
 	
 }
+
 
 BoxGraph.prototype.render = function() {
 	throw "'render()' method must be implemented by a final class";
