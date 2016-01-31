@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
-    <title>title</title>
     <style>
     	.graph_container {
     		height: 350px;
@@ -11,10 +9,64 @@
     	}
     </style>
     <link href="../dist/d3.SimpleGraphs.css" rel="stylesheet">
-
   </head>
   <body>
-  
+      
+    <div id='frame'>
+      
+      <h2>Simple graphs</h2>
+
+      <h5>Create simple charts very easily. Just pick parent DOM element, put your data into an array, and run the library.</h5>
+
+      <div class='code_preview'>
+          <!-- HTML generated using hilite.me --><div style="background: #ffffff; overflow:auto;width:auto;border:solid gray;border-width:.1em .1em .1em .8em;padding:.2em .6em;"><pre style="margin: 0; line-height: 125%"><span style="color: #008800; font-style: italic">&lt;!--We&#39;ll load the library&#39;s styles and scripts --&gt;</span>
+<span style="color: #000080; font-weight: bold">&lt;link</span> <span style="color: #FF0000">href=</span><span style="color: #0000FF">&quot;../dist/d3.SimpleGraphs.css&quot;</span> <span style="color: #FF0000">rel=</span><span style="color: #0000FF">&quot;stylesheet&quot;</span><span style="color: #000080; font-weight: bold">&gt;</span>
+<span style="color: #000080; font-weight: bold">&lt;script </span><span style="color: #FF0000">src=</span><span style="color: #0000FF">&quot;../dist/lib/d3.v3.min.js&quot;</span> <span style="color: #FF0000">type=</span><span style="color: #0000FF">&quot;text/javascript&quot;</span><span style="color: #000080; font-weight: bold">&gt;&lt;/script&gt;</span>
+<span style="color: #000080; font-weight: bold">&lt;script </span><span style="color: #FF0000">src=</span><span style="color: #0000FF">&quot;../dist/d3.SimpleGraphs.js&quot;</span> <span style="color: #FF0000">type=</span><span style="color: #0000FF">&quot;text/javascript&quot;</span><span style="color: #000080; font-weight: bold">&gt;&lt;/script&gt;</span>
+ 
+<span style="color: #008800; font-style: italic">&lt;!-- Optionally we can style the charts&#39; containers--&gt;</span>
+<span style="color: #000080; font-weight: bold">&lt;style&gt;</span>
+      .graph_container {
+        <span style="color: #000080; font-weight: bold">height</span>: <span style="color: #0000FF">350px</span>;
+        <span style="color: #000080; font-weight: bold">width</span>: <span style="color: #0000FF">80</span>%;
+                <span style="color: #000080; font-weight: bold">margin</span>: <span style="color: #0000FF">15px</span> <span style="color: #0000FF">10</span>%;
+      }
+<span style="color: #000080; font-weight: bold">&lt;/style&gt;</span>
+
+
+<span style="color: #008800; font-style: italic">&lt;!-- Then we crete the charts&#39; containers --&gt;</span>
+<span style="color: #000080; font-weight: bold">&lt;div</span> <span style="color: #FF0000">id=</span><span style="color: #0000FF">&#39;graph1&#39;</span> <span style="color: #FF0000">class=</span><span style="color: #0000FF">&#39;graph_container&#39;</span><span style="color: #000080; font-weight: bold">&gt;&lt;/div&gt;</span>
+<span style="color: #000080; font-weight: bold">&lt;div</span> <span style="color: #FF0000">id=</span><span style="color: #0000FF">&#39;graph2&#39;</span> <span style="color: #FF0000">class=</span><span style="color: #0000FF">&#39;graph_container&#39;</span><span style="color: #000080; font-weight: bold">&gt;&lt;/div&gt;</span>
+<span style="color: #000080; font-weight: bold">&lt;div</span> <span style="color: #FF0000">id=</span><span style="color: #0000FF">&#39;graph3&#39;</span> <span style="color: #FF0000">class=</span><span style="color: #0000FF">&#39;graph_container&#39;</span><span style="color: #000080; font-weight: bold">&gt;&lt;/div&gt;</span>
+<span style="color: #000080; font-weight: bold">&lt;div</span> <span style="color: #FF0000">id=</span><span style="color: #0000FF">&#39;graph4&#39;</span> <span style="color: #FF0000">class=</span><span style="color: #0000FF">&#39;graph_container&#39;</span><span style="color: #000080; font-weight: bold">&gt;&lt;/div&gt;</span>
+
+
+<span style="color: #008800; font-style: italic">&lt;!-- Then we set the data for the charts--&gt;</span>
+<span style="color: #000080; font-weight: bold">&lt;script&gt;</span>
+<span style="color: #008800; font-style: italic">//These are two different sets of data</span>
+<span style="color: #000080; font-weight: bold">var</span> positiveData = [<span style="color: #0000FF">25</span>,<span style="color: #0000FF">23</span>,<span style="color: #0000FF">21</span>,<span style="color: #0000FF">17</span>,<span style="color: #0000FF">14</span>,<span style="color: #0000FF">11</span>,<span style="color: #0000FF">10</span>,<span style="color: #0000FF">12</span>,<span style="color: #0000FF">14</span>,<span style="color: #0000FF">17</span>,<span style="color: #0000FF">20</span>,<span style="color: #0000FF">23</span>];
+<span style="color: #008800; font-style: italic">//Every graph will use either ont or the other set</span>
+<span style="color: #000080; font-weight: bold">var</span> negPosData = [<span style="color: #0000FF">20</span>,<span style="color: #0000FF">19</span>,<span style="color: #0000FF">17</span>,<span style="color: #0000FF">13</span>,-<span style="color: #0000FF">2</span>,-<span style="color: #0000FF">3</span>,-<span style="color: #0000FF">7</span>,<span style="color: #0000FF">8</span>,<span style="color: #0000FF">9</span>,<span style="color: #0000FF">13</span>,<span style="color: #0000FF">15</span>,<span style="color: #0000FF">18</span>];
+        
+<span style="color: #000080; font-weight: bold">var</span> keys = [<span style="color: #0000FF">&quot;Jan&quot;</span>, <span style="color: #0000FF">&quot;Feb&quot;</span>, <span style="color: #0000FF">&quot;Mar&quot;</span>, <span style="color: #0000FF">&quot;Apr&quot;</span>, <span style="color: #0000FF">&quot;May&quot;</span>, <span style="color: #0000FF">&quot;Jun&quot;</span>, <span style="color: #0000FF">&quot;Jul&quot;</span>, <span style="color: #0000FF">&quot;Aug&quot;</span>, <span style="color: #0000FF">&quot;Sep&quot;</span>, <span style="color: #0000FF">&quot;Oct&quot;</span>, <span style="color: #0000FF">&quot;Nov&quot;</span>, <span style="color: #0000FF">&quot;Dec&quot;</span>];
+<span style="color: #000080; font-weight: bold">&lt;/script&gt;</span>
+
+<span style="color: #008800; font-style: italic">&lt;!-- Finally, we start the four charts --&gt;</span>
+<span style="color: #000080; font-weight: bold">&lt;script&gt;</span>
+d3.simpleGraphs.bars(document.getElementById(<span style="color: #0000FF">&#39;graph1&#39;</span>), keys, positiveData, {});
+
+d3.simpleGraphs.bars(document.getElementById(<span style="color: #0000FF">&#39;graph2&#39;</span>), keys, negPosData, {});
+
+d3.simpleGraphs.line(document.getElementById(<span style="color: #0000FF">&#39;graph3&#39;</span>), keys, negPosData, {});
+
+d3.simpleGraphs.area(document.getElementById(<span style="color: #0000FF">&#39;graph4&#39;</span>), keys, positiveData, {});
+<span style="color: #000080; font-weight: bold">&lt;/script&gt;</span>
+</pre></div>
+      </div>
+
+
+
+
   		<div id='container'>
   			<div id='graph1' class='graph_container'>
   			</div>
@@ -25,6 +77,9 @@
         <div id='graph4' class='graph_container'>
         </div>
   		</div>
+
+
+  </div>
 
   <script src="../dist/lib/d3.v3.min.js" type="text/javascript"></script>
   <script src="../dist/d3.SimpleGraphs.js" type="text/javascript"></script>
